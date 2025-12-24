@@ -7,7 +7,7 @@ A Discord bot for managing a Minecraft server via RCON and systemd.
 - **Server Status**: Check if server is online, player count, list, version.
 - **RCON Commands**: Execute commands like /op, /deop, /say, /kick, /ban, /players.
 - **Lifecycle Management**: Start, stop, restart server with graceful saves, confirmations, and cooldowns.
-- **Plugin Management**: Download and install plugins from trusted sources, auto-restart with cooldown.
+- **Plugin Management**: Download and install plugins from trusted sources, remove plugins via interactive menu, auto-restart with cooldown. Remove plugins via interactive menu.
 - **Logging**: View last N log lines from systemd journal.
 - **Notifications**: Automatic notifications for server status changes, player join/leave, and crash alerts.
 - **Security**: Role-based access, input validation, no shell exposure.
@@ -39,6 +39,7 @@ src/
  │    ├── stop.js
  │    ├── restart.js
  │    ├── addPlugin.js
+ │    ├── removePlugin.js
  │    └── lastLogs.js
  └── utils/
      ├── cooldowns.js
@@ -110,7 +111,7 @@ sudo systemctl status mc-discord-bot
 - **Modular Architecture**: Separated concerns into services, commands, utils, and config for maintainability.
 - **RCON Service**: Handles secure command execution with timeouts and error handling.
 - **Systemd Service**: Uses `execFile` with `sudo` for service control, no shell interpolation.
-- **Plugin Service**: Downloads via HTTP client (axios), validates domains exactly, prevents overwrites.
+- **Plugin Service**: Downloads via HTTP client (axios), validates domains exactly, prevents overwrites. Removes via select menu with file deletion.
 - **Polling**: Checks status every minute for notifications and crash detection using proper timestamp.
 - **Confirmations**: Button-based prompts for destructive actions.
 - **Cooldowns**: 5-minute limits on dangerous commands.

@@ -116,6 +116,24 @@ client.on('interactionCreate', async (interaction) => {
         await interaction.update({ content: 'Operation failed.', embeds: [], components: [] });
       }
     }
+  } else if (interaction.isStringSelectMenu()) {
+    if (interaction.customId === 'remove_plugin_select') {
+      const plugin = interaction.values[0];
+      const filePath = path.join(env.PLUGINS_DIR, plugin);
+
+      await interaction.deferUpdate();
+
+      try {
+        fs.unlinkSync(filePath);
+        await rconService.sendCommand('save-all');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        await systemdService.restart();
+        setCooldown(interaction.user.id, 'removeplugin');
+        await interaction.editReply({ content: `Plugin ${plugin} removed and server restarted.`, embeds: [], components: [] });
+      } catch (error) {
+        await interaction.editReply({ content: 'Failed to remove plugin.', embeds: [], components: [] });
+      }
+    }
   }
 });
 
