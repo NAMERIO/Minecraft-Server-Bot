@@ -2,9 +2,9 @@
   "name": "mc-discord-bot",
   "version": "1.0.0",
   "description": "Discord bot for Minecraft server management",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "discord.js": "^14.14.1",
