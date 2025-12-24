@@ -19,7 +19,9 @@ module.exports = {
       return interaction.reply({ content: 'Invalid username.', ephemeral: true });
     }
 
+    await interaction.deferReply();
+
     const response = await rconService.sendCommand(`deop ${username}`);
-    await interaction.reply({ content: response || 'Command executed.' });
+    await interaction.editReply({ content: response || 'Command executed.' });
   }
 };

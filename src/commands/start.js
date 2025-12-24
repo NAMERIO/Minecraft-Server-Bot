@@ -12,11 +12,13 @@ module.exports = {
       return interaction.reply({ content: 'Admin only.', ephemeral: true });
     }
 
+    await interaction.deferReply();
+
     try {
       await systemdService.start();
-      await interaction.reply({ content: 'Server starting...' });
+      await interaction.editReply({ content: 'Server starting...' });
     } catch (error) {
-      await interaction.reply({ content: 'Failed to start server.', ephemeral: true });
+      await interaction.editReply({ content: 'Failed to start server.' });
     }
   }
 };

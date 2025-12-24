@@ -15,12 +15,14 @@ module.exports = {
 
     const lines = interaction.options.getInteger('lines') || 10;
 
+    await interaction.deferReply();
+
     try {
       const logs = await logService.getLastLogs(lines);
       const logLines = logs.split('\n').slice(-lines).join('\n');
-      await interaction.reply({ content: `\`\`\`\n${logLines}\n\`\`\``, ephemeral: true });
+      await interaction.editReply({ content: `\`\`\`\n${logLines}\n\`\`\``, ephemeral: true });
     } catch (error) {
-      await interaction.reply({ content: 'Unable to get logs.', ephemeral: true });
+      await interaction.editReply({ content: 'Unable to get logs.', ephemeral: true });
     }
   }
 };

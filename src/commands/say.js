@@ -14,7 +14,10 @@ module.exports = {
     }
 
     const message = interaction.options.getString('message');
+
+    await interaction.deferReply();
+
     await rconService.sendCommand(`say ${message}`);
-    await interaction.reply({ content: 'Message sent.', ephemeral: true });
+    await interaction.editReply({ content: 'Message sent.', ephemeral: true });
   }
 };

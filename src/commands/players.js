@@ -12,7 +12,9 @@ module.exports = {
       return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
     }
 
+    await interaction.deferReply();
+
     const list = await rconService.sendCommand('list');
-    await interaction.reply({ content: list || 'Unable to get player list.' });
+    await interaction.editReply({ content: list || 'Unable to get player list.' });
   }
 };

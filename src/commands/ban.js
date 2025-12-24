@@ -21,7 +21,9 @@ module.exports = {
       return interaction.reply({ content: 'Invalid username.', ephemeral: true });
     }
 
+    await interaction.deferReply();
+
     const response = await rconService.sendCommand(`ban ${username} ${reason}`);
-    await interaction.reply({ content: response || 'Player banned.' });
+    await interaction.editReply({ content: response || 'Player banned.' });
   }
 };

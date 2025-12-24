@@ -13,13 +13,15 @@ module.exports = {
       return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
     }
 
+    await interaction.deferReply();
+
     const online = await systemdService.isActive();
     if (!online) {
       const embed = new EmbedBuilder()
         .setTitle('Minecraft Server Status')
         .setColor(0xff0000)
         .addFields({ name: 'Status', value: 'Offline', inline: true });
-      return interaction.reply({ embeds: [embed] });
+      return interaction.editReply({ embeds: [embed] });
     }
 
     const status = await rconService.getServerStatus();
@@ -34,6 +36,6 @@ module.exports = {
     if (status.playerList.length > 0) {
       embed.addFields({ name: 'Online Players', value: status.playerList.join(', ') });
     }
-    await interaction.reply({ embeds: [embed] });
+    await interaction.editReply({ embeds: [embed] });
   }
 };
