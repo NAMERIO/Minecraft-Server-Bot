@@ -55,8 +55,33 @@ index.js                # Entry point, loads commands and starts bot
 3. `npm install`.
 4. Copy `.env.example` to `.env` and fill in the values.
 5. Ensure sudo rules allow the bot user to run `systemctl` and `journalctl` for `minecraft.service`.
-6. `npm start` (or use PM2: `npm install -g pm2; pm2 start npm --name mc-bot -- start`).
+6. Create a systemd service to run the bot continuously:
+```bash
+sudo nano /etc/systemd/system/mc-discord-bot.service
+```
+```bash
+[Unit]
+Description=Minecraft Discord Bot
+After=network.target
 
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/minecraft/Minecraft-Server-Bot
+ExecStart=/usr/bin/node /root/minecraft/Minecraft-Server-Bot/index.js
+Restart=on-failure
+EnvironmentFile=/root/minecraft/Minecraft-Server-Bot/.env
+
+[Install]
+WantedBy=multi-user.target
+```
+7. Enable and start the service:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable mc-discord-bot
+sudo systemctl start mc-discord-bot
+sudo systemctl status mc-discord-bot
+```
 ## Configuration
 
 - `DISCORD_TOKEN`: Your Discord bot token.
