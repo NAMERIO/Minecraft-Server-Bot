@@ -1,5 +1,5 @@
 module.exports = {
-    COOLDOWN_MS: 300000, // 5 minutes
+    COOLDOWN_MS: 0, // 0 minutes
     SHUTDOWN_RESET_MS: 120000, // 2 minutes
     POLL_INTERVAL_MS: 60000, // 1 minute
     RESTART_SAVE_DELAY_MS: 5000, // 5 seconds
