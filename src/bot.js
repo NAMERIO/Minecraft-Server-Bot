@@ -1,18 +1,31 @@
-const { Client, GatewayIntentBits, REST, Routes } = require('discord.js');
+const { Client, GatewayIntentBits, REST, Routes, Collection } = require('discord.js');
 const { env } = require('./config/env');
 const { POLL_INTERVAL_MS, SHUTDOWN_RESET_MS } = require('./constants');
 const systemdService = require('./services/systemdService');
 const rconService = require('./services/rconService');
 const { getPendingConfirmation, clearPendingConfirmation } = require('./utils/confirmations');
 const { setCooldown } = require('./utils/cooldowns');
+const fs = require('fs');
+const path = require('path');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+client.commands = new Collection();
 
 let lastOnline = false;
 let lastPlayerList = [];
 let intentionalShutdown = 0;
 
-async function registerCommands(commands) {
+// Load commands
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+  const command = require(path.join(commandsPath, file));
+  client.commands.set(command.data.name, command);
+}
+
+async function registerCommands() {
+  const commands = client.commands.map(command => command.data);
   const rest = new REST({ version: '10' }).setToken(env.DISCORD_TOKEN);
   try {
     await rest.put(Routes.applicationCommands(env.DISCORD_CLIENT_ID), { body: commands });
@@ -22,8 +35,9 @@ async function registerCommands(commands) {
   }
 }
 
-client.on('ready', () => {
+client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
+  await registerCommands();
   setInterval(async () => {
     const channel = client.channels.cache.get(env.NOTIFICATION_CHANNEL_ID);
     if (!channel) return;
@@ -56,6 +70,19 @@ client.on('ready', () => {
 
 client.on('interactionCreate', async (interaction) => {
   if (interaction.isChatInputCommand()) {
+    const command = client.commands.get(interaction.commandName);
+    if (!command) return;
+
+    try {
+      await command.execute(interaction);
+    } catch (error) {
+      console.error(error);
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      } else if (interaction.deferred) {
+        await interaction.editReply({ content: 'There was an error executing this command.' });
+      }
+    }
   } else if (interaction.isButton()) {
     const pending = getPendingConfirmation(interaction.user.id);
     if (!pending) return interaction.reply({ content: 'No pending confirmation.', ephemeral: true });
