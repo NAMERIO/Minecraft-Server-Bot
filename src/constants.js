@@ -15,6 +15,7 @@ module.exports = {
         'www.hangar.papermc.io',
         'hangarcdn.papermc.io',
         'mc.resurviv.biz',
-        'modrinth.com'
+        'modrinth.com',
+        'cdn.modrinth.com'
     ]
 };
