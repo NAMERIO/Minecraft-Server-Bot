@@ -4,19 +4,18 @@ const path = require('path');
 const { env } = require('../config/env');
 
 class PluginService {
-  async downloadPlugin(url) {
-    if (!url.endsWith('.jar')) {
-      throw new Error('URL must point to a .jar file');
+  async downloadPlugin(url, filename) {
+    if (!filename) {
+      filename = path.basename(new URL(url).pathname) || 'plugin.jar';
     }
 
-    const filename = path.basename(new URL(url).pathname);
     const dest = path.join(env.PLUGINS_DIR, filename);
 
     if (fs.existsSync(dest)) {
       throw new Error('Plugin file already exists');
     }
 
-    const response = await axios.get(url, { responseType: 'stream' });
+    const response = await axios.get(url, { responseType: 'stream', maxRedirects: 5 });
     const writer = fs.createWriteStream(dest);
 
     response.data.pipe(writer);
