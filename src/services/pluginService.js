@@ -2,17 +2,14 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const { env } = require('../config/env');
-const { isDomainAllowed } = require('../utils/domainWhitelist');
-const { validateUrl } = require('../utils/validators');
 
 class PluginService {
   async downloadPlugin(url) {
-    if (!validateUrl(url) || !isDomainAllowed(url) || !url.endsWith('.jar')) {
-      throw new Error('Invalid or untrusted URL');
+    if (!url.endsWith('.jar')) {
+      throw new Error('URL must point to a .jar file');
     }
 
-    const urlObj = new URL(url);
-    const filename = path.basename(urlObj.pathname);
+    const filename = path.basename(new URL(url).pathname);
     const dest = path.join(env.PLUGINS_DIR, filename);
 
     if (fs.existsSync(dest)) {
