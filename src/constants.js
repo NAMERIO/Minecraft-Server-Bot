@@ -16,6 +16,7 @@ module.exports = {
         'hangarcdn.papermc.io',
         'mc.resurviv.biz',
         'modrinth.com',
-        'cdn.modrinth.com'
+        'cdn.modrinth.com',
+        'download.geysermc.org'
     ]
 };
