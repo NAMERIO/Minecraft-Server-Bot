@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { validateEnv } = require('./config/env');
 const { client } = require('./bot');
 
