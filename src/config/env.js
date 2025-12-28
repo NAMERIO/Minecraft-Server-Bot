@@ -11,7 +11,8 @@ const requiredEnvVars = [
   'RCON_PORT',
   'RCON_PASSWORD',
   'MINECRAFT_SERVICE',
-  'PLUGINS_DIR'
+  'PLUGINS_DIR',
+  'LOGS_DIR'
 ];
 
 function validateEnv() {
