@@ -6,10 +6,23 @@ const rconService = require('./rconService');
 const LOG_FILE = path.join(env.LOGS_DIR, 'latest.log');
 
 function parseChatLine(line) {
+  // Chat message
   const asyncChatRegex = /^\[\d{2}:\d{2}:\d{2}\] \[Async Chat Thread - #\d+\/INFO\]: <([^>]+)> (.+)$/;
-  const match = line.match(asyncChatRegex);
+  let match = line.match(asyncChatRegex);
   if (match) {
-    return { player: match[1], message: match[2] };
+    return { type: 'chat', player: match[1], message: match[2] };
+  }
+  // Join
+  const joinRegex = /^\[\d{2}:\d{2}:\d{2}\] \[Server thread\/INFO\]: ([^ ]+) joined the game$/;
+  match = line.match(joinRegex);
+  if (match) {
+    return { type: 'join', player: match[1] };
+  }
+  // Leave
+  const leaveRegex = /^\[\d{2}:\d{2}:\d{2}\] \[Server thread\/INFO\]: ([^ ]+) left the game$/;
+  match = line.match(leaveRegex);
+  if (match) {
+    return { type: 'leave', player: match[1] };
   }
   return null;
 }
@@ -38,9 +51,14 @@ function startLogWatcher() {
         stream.on('end', async () => {
           const lines = chunkBuffer.split(/\r?\n/);
           for (const line of lines) {
-            const chat = parseChatLine(line);
-            if (chat) {
-              await rconService.sendPublicMessage(chat.player, chat.message);
+            const event = parseChatLine(line);
+            if (!event) continue;
+            if (event.type === 'chat') {
+              await rconService.sendPublicMessage(event.player, event.message);
+            } else if (event.type === 'join') {
+              await rconService.sendMessageToServer(`**${event.player}** joined the game`);
+            } else if (event.type === 'leave') {
+              await rconService.sendMessageToServer(`**${event.player}** left the game`);
             }
           }
         });
