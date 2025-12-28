@@ -8,8 +8,8 @@ const LOG_FILE = path.join(env.LOGS_DIR, 'latest.log');
 let lastSize = 0;
 
 function parseChatLine(line) {
-  const chatRegex = /^\[\d{2}:\d{2}:\d{2}\] \[Server thread\/INFO\]: ([^:]+): (.+)$/;
-  const match = line.match(chatRegex);
+  const asyncChatRegex = /^\[\d{2}:\d{2}:\d{2}\] \[Async Chat Thread - #\d+\/INFO\]: <([^>]+)> (.+)$/;
+  const match = line.match(asyncChatRegex);
   if (match) {
     return { player: match[1], message: match[2] };
   }
