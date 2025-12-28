@@ -6,6 +6,7 @@ const requiredEnvVars = [
   'ADMIN_ROLE_ID',
   'MOD_ROLE_ID',
   'NOTIFICATION_CHANNEL_ID',
+  'DISCORD_WEBHOOK_URL',
   'RCON_HOST',
   'RCON_PORT',
   'RCON_PASSWORD',

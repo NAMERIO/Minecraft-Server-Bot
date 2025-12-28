@@ -1,6 +1,7 @@
 const { Rcon } = require('rcon-client');
 const { env } = require('../config/env');
 const { RCON_TIMEOUT_MS } = require('../constants');
+const webhookService = require('./webhookService');
 
 class RconService {
   async sendCommand(command) {
@@ -37,6 +38,17 @@ class RconService {
       }
     }
     return { players, playerList, version: version || 'Unknown' };
+  }
+
+  async sendMessageToServer(message) {
+    const command = `say ${message}`;
+    const response = await this.sendCommand(command);
+    await webhookService.sendMessage(`**Server Broadcast:** ${message}`);
+    return response;
+  }
+
+  async sendPublicMessage(playerName, message) {
+    await webhookService.sendMessage(`**${playerName}:** ${message}`);
   }
 }
 
