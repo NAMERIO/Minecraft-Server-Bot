@@ -14,8 +14,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 client.on('messageCreate', async (message) => {
   if (
     message.channel.id === env.NOTIFICATION_CHANNEL_ID &&
-    !message.author.bot &&
-    message.webhookId
+    !message.author.bot
   ) {
     const username = message.member ? message.member.displayName : message.author.username;
     const content = message.content.replace(/@/g, 'at-');
