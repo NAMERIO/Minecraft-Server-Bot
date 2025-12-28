@@ -9,7 +9,18 @@ const { setCooldown } = require('./utils/cooldowns');
 const fs = require('fs');
 const path = require('path');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+client.on('messageCreate', async (message) => {
+  if (
+    message.channel.id === env.NOTIFICATION_CHANNEL_ID &&
+    !message.author.bot &&
+    message.webhookId
+  ) {
+    const username = message.member ? message.member.displayName : message.author.username;
+    const content = message.content.replace(/@/g, 'at-');
+    await rconService.sendMessageToServer(`${username}: ${content}`);
+  }
+});
 client.commands = new Collection();
 
 let lastOnline = false;
