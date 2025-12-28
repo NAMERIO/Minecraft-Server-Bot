@@ -48,7 +48,8 @@ class RconService {
   }
 
   async sendPublicMessage(playerName, message) {
-    await webhookService.sendMessage(`**${playerName}**: ${message}`);
+    const safeMessage = message.replace(/@/g, 'at-');
+    await webhookService.sendMessage(`**${playerName}**: ${safeMessage}`);
   }
 }
 
