@@ -48,7 +48,7 @@ class RconService {
   }
 
   async sendPublicMessage(playerName, message) {
-    await webhookService.sendMessage(`**${playerName}:** ${message}`);
+    await webhookService.sendMessage(`**${playerName}**: ${message}`);
   }
 }
 

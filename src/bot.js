@@ -3,6 +3,7 @@ const { env } = require('./config/env');
 const { POLL_INTERVAL_MS, SHUTDOWN_RESET_MS } = require('./constants');
 const systemdService = require('./services/systemdService');
 const rconService = require('./services/rconService');
+const webhookService = require('./services/webhookService');
 const { getPendingConfirmation, clearPendingConfirmation } = require('./utils/confirmations');
 const { setCooldown } = require('./utils/cooldowns');
 const fs = require('fs');
@@ -14,8 +15,6 @@ client.commands = new Collection();
 let lastOnline = false;
 let lastPlayerList = [];
 let intentionalShutdown = 0;
-
-// Load commands
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
@@ -57,8 +56,18 @@ client.on('ready', async () => {
       if (JSON.stringify(status.playerList.sort()) !== JSON.stringify(lastPlayerList.sort())) {
         const joined = status.playerList.filter(p => !lastPlayerList.includes(p));
         const left = lastPlayerList.filter(p => !status.playerList.includes(p));
-        if (joined.length) channel.send(`➡️ Players joined: ${joined.join(', ')}`);
-        if (left.length) channel.send(`⬅️ Players left: ${left.join(', ')}`);
+        if (joined.length) {
+          const boldJoined = joined.map(p => `**${p}**`).join(', ');
+          const joinMsg = `Players joined: ${boldJoined}`;
+          channel.send(joinMsg);
+          await webhookService.sendMessage(joinMsg);
+        }
+        if (left.length) {
+          const boldLeft = left.map(p => `**${p}**`).join(', ');
+          const leftMsg = `Players left: ${boldLeft}`;
+          channel.send(leftMsg);
+          await webhookService.sendMessage(leftMsg);
+        }
         lastPlayerList = [...status.playerList];
       }
     }
