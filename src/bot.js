@@ -4,6 +4,7 @@ const { POLL_INTERVAL_MS, SHUTDOWN_RESET_MS } = require('./constants');
 const systemdService = require('./services/systemdService');
 const rconService = require('./services/rconService');
 const webhookService = require('./services/webhookService');
+const { pollLogForChat } = require('./services/chatLogPoller');
 const { getPendingConfirmation, clearPendingConfirmation } = require('./utils/confirmations');
 const { setCooldown } = require('./utils/cooldowns');
 const fs = require('fs');
@@ -85,6 +86,7 @@ client.on('ready', async () => {
     if (intentionalShutdown && Date.now() - intentionalShutdown > SHUTDOWN_RESET_MS) {
       intentionalShutdown = 0;
     }
+    await pollLogForChat();
   }, POLL_INTERVAL_MS);
 });
 
