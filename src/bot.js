@@ -13,7 +13,7 @@ const path = require('path');
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 client.on('messageCreate', async (message) => {
   if (
-    message.channel.id === env.NOTIFICATION_CHANNEL_ID &&
+    message.channel.id === env.DISCORD_CHAT_CHANNEL_ID &&
     !message.author.bot
   ) {
     const username = message.member ? message.member.displayName : message.author.username;
