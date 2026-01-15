@@ -154,6 +154,22 @@ client.on('interactionCreate', async (interaction) => {
       } catch (error) {
         await interaction.editReply({ content: 'Failed to remove plugin.', embeds: [], components: [] });
       }
+    } else if (interaction.customId === 'remove_mod_select') {
+      const mod = interaction.values[0];
+      const filePath = path.join(env.MODS_DIR, mod);
+
+      await interaction.deferUpdate();
+
+      try {
+        fs.unlinkSync(filePath);
+        await rconService.sendCommand('save-all');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        await systemdService.restart();
+        setCooldown(interaction.user.id, 'removemod');
+        await interaction.editReply({ content: `Mod ${mod} removed and server restarted.`, embeds: [], components: [] });
+      } catch (error) {
+        await interaction.editReply({ content: 'Failed to remove mod.', embeds: [], components: [] });
+      }
     }
   }
 });

@@ -12,6 +12,7 @@ const requiredEnvVars = [
   'RCON_PASSWORD',
   'MINECRAFT_SERVICE',
   'PLUGINS_DIR',
+  'MODS_DIR',
   'LOGS_DIR'
 ];
 
